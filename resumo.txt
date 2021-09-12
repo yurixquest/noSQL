@@ -1,0 +1,295 @@
+-- # CouchDB # --
+
+Inicie o FAUXTON na web ou digite localhost:5984 na barra de site
+Entrar com usuario e senha (geek)
+No caso do Linux há por padrão dois bancos de dados (_replicator e _users)
+
+As abas Create Database cria os bancos e JSON{} teste os bancos de dados criados numa nova aba da web.
+Na aba com icone de livro temos o help do programa. O sino indica alertas/notificações. Nas laterais temos
+mais alguns icones para manipular nossos bancos de dados.
+
+Nos icones laterais vale ressaltar o Icone de SETUp onde podemos configurar um cluster (varios servidores espalhados) ou um sigle note
+Em configurations temos a aba CORS que permite que outras aplicações consumam dados do nosso banco de dados.
+
+-- Criando um banco e documentos
+
+Acessar CREATE DATABASE e em seguida, na nova aba, NEW DOCUMENTS. Iremos ser lançados para uma nova aba que ja nos da o "_id" do documento a ser
+escrito:
+{
+  "_id": "e008da110e71d56f9b27aa4fc40003f6"
+}
+
+Agora vmaos adicionar novos campos:
+
+{
+  "_id": "e008da110e71d56f9b27aa4fc40003f6",
+  "nome": "felicia",
+  "sobrenome": "jones"
+}
+
+Após isto podemos clicar em CREATE DOCUMENT, e voltaremos a pagina inicial do banco criado com um registo novo na janela princiapl
+subdividido em id, key e value. Estaremos localizados na subaba metadata, na subaba TABLE poderemos ver os nomes reais que utilizamos ao invés
+de códigos. Em {}JSON nestas subabas podemos ver um código ainda maior.
+
+Diferente do MongoDB onde criamos um banco de dados, depois uma coleção, e nessa coleção inseriamos os documentos, no CouchDB inserimos os documentos direto no banco
+de dados sem uma coleção.
+
+Podemos adicionar um documento com mais areas como 
+{
+  "_id": "e008da110e71d56f9b27aa4fc4003695",
+  "_rev": "2-5c21365ac0a2948e50dc4feb864e6a55",
+  "nome": "Angelina",
+  "sobrenome": "Jolie",
+  "data_nascimento": "10/12/1976"
+}
+Quando acessarmos a aba TABLE, haverá uma nova coluna com data_nascimento que não consta no primeiro documento
+Podemos deletar um documento selecionando a caixa na lateral esquerda do lado do documento e em seguida clicando na
+lixeira logo acima.
+
+Quando estaos na aba table e o documento possui mais de cinco colunas, as demais ficam ocultas e devem ser selecionadas clicando em uma das colunas
+e subistituindo sua vizualização por uma nova coluna, ou clicando na parte inferior em SHOW ALL COLUMNS
+
+--------------
+
+Aplicações WEB e MObile geralmente consomem recursos através da internet, estes recuros são feitos através de uma API REST
+O CouchDB fornece uma API REST. REST é um padrão do protocolo HTTP. HTTP é um protocolo (protocol) que permite a obtenção de recursos, como documentos HTML. É a base de 
+qualquer troca de dados na Web e um protocolo cliente-servidor, o que significa que as requisições são iniciadas pelo destinatário, geralmente um navegador da Web.
+Este HTTP possui os VERBOS HTTP, que são o padrão de conversasão entre todos os elementos que utilizam do protocolo HTTP. Dentre estes verbos, os mais utilizados são GET, POS, PUT e DELETE.
+
+1. GET -> Utilizamos quando acessamos um recurso na web, como por exemplo acessar uma página na web
+2. POST -> Utilizamos quando criamos um novo recurso na web, como por exemplo preencher um formulário num website e envia-lo/posta-lo
+3. PUT -> Utilizamos este método quando atualizamos um recurso existente na WEB. Editar um recurso na web como um formulário ja existente.
+4. DELETE -> Utilizamos este método quando deletamos/excluímos um recurso existente na web.
+
+Estas operações são chamadas de CRUD (Create (POST), Retreave (GET), Updade (PUT) e Delete (DELETE))
+O CouchDB oferece todos os recursos de um Backend, podendno interagir com qualquer FrontEnd, tudo isso a partir da API REST do CouchDB.
+
+----------------
+
+-- Como o PostMan pode interagir com nosso banco de dados?
+Para utilizar o PostMan foi preciso primeiramente criar um TEAM para que pudesse chegar a pagina de uso. E assim iniciar seu uso com CouchDB.
+Os passos a serem seguidos forão:
+
+1. Conectar o Postman ao Couch DB através de uma NEW TAB (ao lado de Overview) e par ao método GET (no topo da aba) indicar o caminho do FAUXON por http://localhost:5984 (raiz do servidor)
+2. Clica em SEND (é enviada uma requisição de http, recebemos um status (OK) que indica a conexão e também um cógio JSON no final da página (baseado em chave/valor).
+2.1. OPCIONAL: Salvar (SAVE AS na setinha), colocando nome e criando uma coleção (CREATE)
+2.2. OPCIONAL: Logar em outro pc pelo PostMan irá sincronizar nossos dados em outro PC
+3. Trazer os bancos de dados criados no FAUXTON, para isso, no método GET adicionar ao endereço no final /_all_dbs
+4. Antes de dar SEND, SAVE AS e dar um novo nome (ja irá salvar na coleção que criamos)
+5. Após isso receberemos os bancos descritos no JSON.
+
+OBS: Houve um erro no Postman ao tentar trazer os bancos de CouchDB, o erro apresentado em JSON na parte de baixo do programa explicava que eu não era
+ADMIN e não tinha permissão para a ação de importar os bancos, desta forma precisei ir na aba AUTHORIZATION e selecionar o TYPE BASIC AUTH. Este comando me permitiu
+inserir login e senha que uso no FAUXTON e assim foi possível baixar os bancos.
+
+-- Criando um banco de dados no PostMan
+/_all_dbs é um local do CouchDB que armazena todos os bancos de dados criados, para criarmos um novo banco podemos atualizar este local com PUT.
+
+1. Selecionar PUT como método
+2. No caminho http digitar ao final (retirar _all_bs) o nome do banco de dados, vamos usar produtos.
+3. SAVE AS e em seguida SEND
+
+A resposta JSON será:
+
+{
+    "ok": true
+}
+
+O recurso foi criado.
+Na aba HEADERS podemos ver informações do server e do local deste banco.
+
+Podemos ver se o banco foi criado voltando no comando GET ALL DBS que criamos anteriormente e clicando em SEND
+Agora irão retornar todos os nossos bancos, inclusive o banco "produtos" recém criado. Este banco também estará criado no CouchDB
+
+-- Inserindo um documento no banco de dados "produtos"
+Precisamos criar um novo recurso com POST.
+
+1. selecionamos o método POST
+2. Colocamos o caminho do localhost para produtos (http://localhost:5984/produtos)
+3. Iniciar a aba BODY (Onde enviaremos os dados dos campos do produtos)
+4. Selecionar RAW (pois é um texto bruto)
+5. Na opção padrão TEXT (mais a direita de RAW) selecionar JSON
+6. Escrever o código, exemplo:
+{
+"nome": "Playstation 4",
+"preco": 1799.45
+}
+7. Clicar em SAVE (pois foi feito modificação)
+8. SEND
+8.1 Observar que em STATUS estará: 201 CREATED, pois foi criado um recurso
+8.2 O resultado esperado seguirá como:
+{
+    "ok": true,
+    "id": "e008da110e71d56f9b27aa4fc40086d8",
+    "rev": "1-8432d880be6a55b13fa41e75155fe061"
+}
+
+Podemos ver que foi criado um id automático para este documento novo e uma revisão (rev). É através da revisão, que muda cad avez que modificamos
+um recurso, que podemos navegar pelas versões deste recurso, e isso é muito importante para o CouchDB.
+
+-- Assessando os documentos de um banco
+Podemos assessar documentos através do comando /_all_docs espeificando o banco de dados e usando o método GET.
+
+1. Use o método GET para http://localhost:5984/produtos/_all_docs
+2. Esperamos receber no BODY o JSON especificando os dados que inserimos, como:
+{
+    "total_rows": 2, (total de linhas)
+    "offset": 0,
+    "rows": [
+        {
+            "id": "e008da110e71d56f9b27aa4fc40086d8",
+            "key": "e008da110e71d56f9b27aa4fc40086d8",
+            "value": {
+                "rev": "1-8432d880be6a55b13fa41e75155fe061"
+            }
+        },
+        {
+            "id": "e008da110e71d56f9b27aa4fc4009c2e",
+            "key": "e008da110e71d56f9b27aa4fc4009c2e",
+            "value": {
+                "rev": "1-db59079232ec45432670b2e8a648d2ae"
+            }
+        }
+    ]
+}
+
+Os dados são trazidos em forma de METADADOS (que podemos ver no CouchDB)
+Para ver o conteúdo digitamos :
+
+1. http://localhost:5984/produtos/_all_docs?include_docs=true
+
+{
+    "total_rows": 2,
+    "offset": 0,
+    "rows": [
+        {
+            "id": "e008da110e71d56f9b27aa4fc40086d8",
+            "key": "e008da110e71d56f9b27aa4fc40086d8",
+            "value": {
+                "rev": "1-8432d880be6a55b13fa41e75155fe061"
+            },
+            "doc": {
+                "_id": "e008da110e71d56f9b27aa4fc40086d8",
+                "_rev": "1-8432d880be6a55b13fa41e75155fe061",
+                "nome": "Playstation 4",
+                "preco": 1799.45
+            }
+        },
+        {
+            "id": "e008da110e71d56f9b27aa4fc4009c2e",
+            "key": "e008da110e71d56f9b27aa4fc4009c2e",
+            "value": {
+                "rev": "1-db59079232ec45432670b2e8a648d2ae"
+            },
+            "doc": {
+                "_id": "e008da110e71d56f9b27aa4fc4009c2e",
+                "_rev": "1-db59079232ec45432670b2e8a648d2ae",
+                "nome": "WII",
+                "preco": 1999.45
+            }
+        }
+    ]
+}
+
+-- Buscando um documentos específico
+
+1. Copiar o id desejado
+2. GET e adicionar o id o final do http de forma: produtos/e008da110e71d56f9b27aa4fc4009c2e
+3. O resultado segue como:
+{
+    "_id": "e008da110e71d56f9b27aa4fc4009c2e",
+    "_rev": "1-db59079232ec45432670b2e8a648d2ae",
+    "nome": "WII",
+    "preco": 1999.45
+}
+3.1 OPCIONAL: Atualizando o preço deste dado, utizamos PUT
+3.2 Copiamos o BODY resposta e entramos na aba BODY superior, selecionamos RAW
+3.3 Colamos o que copiamos sem precisar do ID (pois a revisão é usada para criar uma nova versão)
+3.4 mudamos o campo desejado, no caos o preço
+{
+    "ok": true,
+    "id": "e008da110e71d56f9b27aa4fc4009c2e",
+    "rev": "2-c2cd657048aa520343fce8d32277d703"
+}
+
+Este novo REV contém a atualização do objeto de mesmo ID. Agora seu preço está diferente, podmeos ver isto apartir 
+da consulta com o id ou a consulta com ?include_docs=true:
+
+GET http://localhost:5984/produtos/e008da110e71d56f9b27aa4fc4009c2e
+
+{
+    "_id": "e008da110e71d56f9b27aa4fc4009c2e",
+    "_rev": "2-c2cd657048aa520343fce8d32277d703",
+    "nome": "WII",
+    "preco": 2700.45
+}
+
+-- Deletando um documento
+
+1. GET http://localhost:5984/produtos/e008da110e71d56f9b27aa4fc4009c2e
+2. Precisamos do ID e da revisão, então devemos copiar ambos (tem de ser a revisão atual).
+3. usar método DELETE.
+4. Copiar a revisão, no http colocar ao final ?rev= e colar o código da revisão
+5. DELETE http://localhost:5984/produtos/e008da110e71d56f9b27aa4fc4009c2e?rev=2-c2cd657048aa520343fce8d32277d703
+6. Um parâmetro será marcado no Postman mostrando REV e seu valor
+7. SAVE
+8. SEND
+{
+    "ok": true,
+    "id": "e008da110e71d56f9b27aa4fc4009c2e",
+    "rev": "3-0d9a81427d3d9b278c9b08ce29cd8019"
+}
+
+Podemos perceber que retornou o id do documento e alterou a revisão, a deleção não realmente deleta o dado do banco, mas muda o documento para um cmapo
+marcaod como deletado. Desta forma podemos recuperar este documento. Se procuramos o bjeto por seu id ele não pode ser encontrado por estar marcado como deletado:
+{
+    "error": "not_found",
+    "reason": "deleted"
+}
+
+-- Deletar banco de dados
+Basta usar o método DELETE para o http do banco em questão
+
+1. DELETE http://localhost:5984/produtos/
+
+-------------------------------
+
+-- QUERYS
+Com documentos inseridos no banco entramso em RUN A QUERY WITH MANGO. Query significa consulta, no caso, estaremos rodando uma consulta.
+O CouchDB ja nos mostra uma Mango Query pronta e ela estara:
+
+{
+	"selector": {
+		"_id": {
+		   "$gt": null
+		}
+	}
+}
+
+Se clicarmos em Run Query, da forma que está, irá resultar em todos os documentos que temos neste banco, pois nada foi especificado.
+No caso acima etsamos selecionando todos os dados em que o id seja maior ($gt) que nul. Podemos alterar estes parametros dando outras chaves 
+como por exemplo o prçeo de produtos nos documentos da sgeuinte forma:
+
+{
+	"selector": {
+		"preco": {
+		   "$gt": 1700
+		}
+	}
+}
+
+Assim teremos um resultado de todos os documentos que possuirem o preço maior que 1700.
+Outro exemplo:
+
+{
+	"selector": {
+		"preco": {
+		   "$gte": 1600
+		}
+	}
+}
+
+Neste caso $gte representa maior ou igual o valor estipulado
+Podemos também usar $lt para menor que ou $lte para menor igual que.
+
+Para mais operadores devemos sempre procurar a documentação do programa.
